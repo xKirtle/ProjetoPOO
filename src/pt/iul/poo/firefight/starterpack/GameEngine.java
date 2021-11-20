@@ -1,8 +1,11 @@
 package pt.iul.poo.firefight.starterpack;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import pt.iul.ista.poo.gui.ImageMatrixGUI;
 import pt.iul.ista.poo.gui.ImageTile;
@@ -31,6 +34,7 @@ public class GameEngine implements Observer {
 	// Dimensoes da grelha de jogo
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
+	public static final String levelPath = "levels/example.txt";
 	
 	private ImageMatrixGUI gui;  		// Referencia para ImageMatrixGUI (janela de interface com o utilizador) 
 //	private List<ImageTile> tileList;	// Lista de imagens
@@ -67,37 +71,60 @@ public class GameEngine implements Observer {
 		gui.update();                            // redesenha as imagens na GUI, tendo em conta as novas posicoes
 	}
 
-	
-	// Criacao dos objetos e envio das imagens para GUI
 	public void start() {
-		createTerrain();      // criar mapa do terreno
-		createMoreStuff();    // criar mais objetos (bombeiro, fogo,...)
-		sendImagesToGUI();    // enviar as imagens para a GUI
+		readLevelData();
+		sendImagesToGUI();
 	}
 
-	
-	// Criacao do terreno - so' pinheiros neste exemplo 
-	private void createTerrain() {
-		
-		for (int y=0; y<GRID_HEIGHT; y++)
-			for (int x=0; x<GRID_HEIGHT; x++)
-				tileList.add(new Pine(new Point2D(x,y)));		
+	private void readLevelData() {
+		File f = new File(levelPath);
+		Scanner s;
+		try {
+			s = new Scanner(f);
+
+			//Map Data
+			int y = 0;
+			while (s.hasNextLine() && y < GRID_HEIGHT) {
+				String str = s.nextLine();
+
+				for (int x = 0; x < GRID_WIDTH; x++) {
+					char type = str.charAt(x);
+					Point2D p = new Point2D(x, y);
+					GameElement element = GameElement.newInstanceByType(type, p);
+					if (element != null)
+						board.setElement(p, element);
+				}
+				y++;
+			}
+
+			//Characters Data
+			while (s.hasNextLine()) {
+				String str = s.nextLine();
+				String[] data = str.split(" ");
+				Point2D p = new Point2D(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+				GameElement element = GameElement.newInstanceByType(data[0], p);
+				if (element == null) break;
+				
+				if (data[0].toLowerCase().equals("fireman")) {
+					fireman = (Fireman)element;
+				}
+//				else if (data[0].toLowerCase().equals("bulldozer"))
+//					bulldozer = (Bulldozer)element;
+//				else if (data[0].toLowerCase().equals("fire"))
+//					fireList.add(element.getPosition());
+
+//				tileList.add(element);
+				
+				board.setElement(p, element);
+				
+			}
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	
-	// Criacao de mais objetos - neste exemplo e' um bombeiro e dois fogos
-		private void createMoreStuff() {
-			fireman = new Fireman( new Point2D(5,5));
-			tileList.add(fireman);
-			
-			tileList.add(new Fire(new Point2D(3,3)));
-			tileList.add(new Fire(new Point2D(3,2)));
-		}
-	
-		
-	// Envio das mensagens para a GUI - note que isto so' precisa de ser feito no inicio
-	// Nao e' suposto re-enviar os objetos se a unica coisa que muda sao as posicoes  
 	private void sendImagesToGUI() {
-		gui.addImages(tileList);
+		gui.addImages(board.exportBoard());
 	}
 }

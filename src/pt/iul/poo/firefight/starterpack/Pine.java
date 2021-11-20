@@ -5,8 +5,8 @@ import pt.iul.ista.poo.utils.Point2D;
 public class Pine extends GameElement implements IBurnable {
 	private int burnTime = 10;
 	
-	public Pine(Point2D p) {
-		super(p);
+	public Pine(Point2D position, String name) {
+		super(position, name);
 	}
 
 	@Override

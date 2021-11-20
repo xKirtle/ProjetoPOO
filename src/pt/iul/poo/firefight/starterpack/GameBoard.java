@@ -2,6 +2,9 @@ package pt.iul.poo.firefight.starterpack;
 
 import java.util.ArrayList;
 
+import pt.iul.ista.poo.gui.ImageTile;
+import pt.iul.ista.poo.utils.Point2D;
+
 public class GameBoard {
 	//TODO:Could just use an ArrayList<ArrayList<GameElement>> No need to define a max constant
 	
@@ -26,7 +29,28 @@ public class GameBoard {
 		return board[x * height + y];
 	}
 	
-	public void setElement(int x, int y, GameElement[] element) {
-		board[x * height + y] = element;
-	}	
+	public GameElement[] getElements(Point2D p) {
+		return getElements(p.getX(), p.getY());
+	}
+	
+	public void setElement(int x, int y, GameElement element) {
+		board[x * height + y][element.getLayer()] = element;
+	}
+	
+	public void setElement(Point2D p, GameElement element) {
+		setElement(p.getX(), p.getY(), element);
+	}
+	
+	public ArrayList<ImageTile> exportBoard() {
+		ArrayList<ImageTile> arr = new ArrayList<>();
+		
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				if (board[i][j] != null)
+					arr.add((ImageTile)board[i][j]);
+			}
+		}
+		
+		return arr;
+	}
 }
