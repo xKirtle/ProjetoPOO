@@ -36,16 +36,12 @@ public class GameEngine implements Observer {
 	public static final int GRID_WIDTH = 10;
 	public static final String levelPath = "levels/example.txt";
 	
-	private ImageMatrixGUI gui;  		// Referencia para ImageMatrixGUI (janela de interface com o utilizador) 
-//	private List<ImageTile> tileList;	// Lista de imagens
+	private ImageMatrixGUI gui;
 	private Fireman fireman;
 	private IActiveElement activeElement; //?
 	
 	private GameBoard board;
-	
-	
-	// Neste exemplo o setup inicial da janela que faz a interface com o utilizador e' feito no construtor 
-	// Tambem poderia ser feito no main - estes passos tem sempre que ser feitos!
+
 	public GameEngine() {
 		 
 		gui = ImageMatrixGUI.getInstance();    // 1. obter instancia ativa de ImageMatrixGUI	
@@ -53,13 +49,9 @@ public class GameEngine implements Observer {
 		gui.registerObserver(this);            // 3. registar o objeto ativo GameEngine como observador da GUI
 		gui.go();                              // 4. lancar a GUI
 		
-//		tileList = new ArrayList<>();
-		
 		board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
 	}
-	
-	// O metodo update() e' invocado sempre que o utilizador carrega numa tecla
-	// no argumento do metodo e' passada um referencia para o objeto observado (neste caso seria a GUI)
+
 	@Override
 	public void update(Observed source) {
 
@@ -105,7 +97,7 @@ public class GameEngine implements Observer {
 				GameElement element = GameElement.newInstanceByType(data[0], p);
 				if (element == null) break;
 				
-				if (data[0].toLowerCase().equals("fireman")) {
+				if (element instanceof Fireman) {
 					fireman = (Fireman)element;
 				}
 //				else if (data[0].toLowerCase().equals("bulldozer"))
