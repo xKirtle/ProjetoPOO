@@ -2,15 +2,14 @@ package pt.iul.poo.firefight.starterpack;
 
 import pt.iul.ista.poo.utils.Point2D;
 
-public class Fire extends GameElement {
+public class Burnt extends GameElement {
 
-	public Fire(Point2D position, String name) {
+	public Burnt(Point2D position, String name) {
 		super(position, name);
 	}
 
 	@Override
 	public int getLayer() {
-		return GameLayers.TemporaryStates.toInt();
+		return GameLayers.BurntElements.toInt();
 	}
-
 }

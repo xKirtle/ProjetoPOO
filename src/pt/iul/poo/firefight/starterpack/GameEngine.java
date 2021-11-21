@@ -11,6 +11,7 @@ import pt.iul.ista.poo.gui.ImageMatrixGUI;
 import pt.iul.ista.poo.gui.ImageTile;
 import pt.iul.ista.poo.observer.Observed;
 import pt.iul.ista.poo.observer.Observer;
+import pt.iul.ista.poo.utils.Direction;
 import pt.iul.ista.poo.utils.Point2D;
 
 // Note que esta classe e' um exemplo - nao pretende ser o inicio do projeto, 
@@ -31,36 +32,44 @@ import pt.iul.ista.poo.utils.Point2D;
 
 public class GameEngine implements Observer {
 
-	// Dimensoes da grelha de jogo
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
 	public static final String levelPath = "levels/example.txt";
+	private static GameEngine Instance;
 	
 	private ImageMatrixGUI gui;
 	private Fireman fireman;
-	private IActiveElement activeElement; //?
+	private IMovable activeElement;
 	
-	private GameBoard board;
+	public GameBoard board;
 
 	public GameEngine() {
 		 
-		gui = ImageMatrixGUI.getInstance();    // 1. obter instancia ativa de ImageMatrixGUI	
-		gui.setSize(GRID_HEIGHT, GRID_WIDTH);  // 2. configurar as dimensoes 
-		gui.registerObserver(this);            // 3. registar o objeto ativo GameEngine como observador da GUI
-		gui.go();                              // 4. lancar a GUI
+		gui = ImageMatrixGUI.getInstance();	
+		gui.setSize(GRID_HEIGHT, GRID_WIDTH); 
+		gui.registerObserver(this);
+		gui.go();
 		
+		Instance = this;
 		board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
 	}
 
 	@Override
 	public void update(Observed source) {
-
-		int key = gui.keyPressed();              // obtem o codigo da tecla pressionada
+		activeElement = fireman;
+		int key = gui.keyPressed();
 		
-		if (key == KeyEvent.VK_ENTER)            // se a tecla for ENTER, manda o bombeiro mover
-			fireman.move();			
+		boolean validMove = false;
 		
-		gui.update();                            // redesenha as imagens na GUI, tendo em conta as novas posicoes
+		if (GameElement.isMovementKey(key))
+			if (activeElement.move(Direction.directionFor(key))) {
+				validMove = true;				
+			}
+		
+		if (validMove) {
+			board.updateElements();
+			gui.update();
+		}
 	}
 
 	public void start() {
@@ -114,6 +123,10 @@ public class GameEngine implements Observer {
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static GameEngine getInstance() {
+		return Instance;
 	}
 	
 	private void sendImagesToGUI() {

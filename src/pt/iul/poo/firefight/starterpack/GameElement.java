@@ -1,9 +1,12 @@
 package pt.iul.poo.firefight.starterpack;
 
+import java.awt.event.KeyEvent;
+
 import pt.iul.ista.poo.gui.ImageTile;
+import pt.iul.ista.poo.utils.Direction;
 import pt.iul.ista.poo.utils.Point2D;
 
-public abstract class GameElement implements ImageTile {
+public abstract class GameElement implements ImageTile, IUpdatable{
 	private Point2D position;
 	private String name;
 
@@ -43,9 +46,35 @@ public abstract class GameElement implements ImageTile {
 	public static GameElement newInstanceByType(String type, Point2D p) {
 		switch (type) {
 			case "Fireman": return new Fireman(p, "fireman");
-//			case "Bulldozer": return new Bulldozer(p);
-//			case "Fire": return new Fire(p);
+			case "Bulldozer": return new Bulldozer(p, "bulldozer_down");
+			case "Fire": return new Fire(p, "fire");
 			default: return new Error(p, "error");
 		}
+	}
+	
+	public static boolean isMovementKey(int keyCode) {
+		switch(keyCode) {
+			case KeyEvent.VK_UP:
+			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_LEFT:
+				return true;
+			default: return false;
+		}
+	}
+	
+	public static String updateSpriteWithDirection(String name, Direction dir) {
+		String newName = name;
+		switch(dir) {
+			case UP: newName += "_up"; break;
+			case RIGHT: newName += "_right"; break;
+			case DOWN: newName += "_down"; break;
+			case LEFT: newName += "_left"; break;
+		}
+		return newName;
+	}
+	
+	public void update() {
+		
 	}
 }

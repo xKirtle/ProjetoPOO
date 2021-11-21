@@ -10,6 +10,6 @@ public class Error extends GameElement {
 
 	@Override
 	public int getLayer() {
-		return 0;
+		return GameLayers.BaseElements.toInt();
 	}
 }
