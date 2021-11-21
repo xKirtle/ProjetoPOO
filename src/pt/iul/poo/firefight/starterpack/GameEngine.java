@@ -35,7 +35,7 @@ public class GameEngine implements Observer {
 		gui.setSize(GRID_HEIGHT, GRID_WIDTH); 
 		gui.registerObserver(this);
 		board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
-		scoreboard = new Scoreboard();
+		scoreboard = Scoreboard.getInstance();
 		gui.go();
 	}
 	
@@ -48,14 +48,7 @@ public class GameEngine implements Observer {
 
 	@Override
 	public void update(Observed source) {
-		//TODO: Probably unnecessary as the new map will instantly be loaded..
-		if (gameOver) {
-			gui.setStatusMessage("Game Score: 1000"); //Scoreboard
-			gui.setMessage("Game Over!"); //Alerta
-			
-			//Depois do alerta, carregar novo nivel
-			return;
-		}
+		if (gameOver) return;
 		
 		int key = gui.keyPressed();
 		
@@ -63,6 +56,7 @@ public class GameEngine implements Observer {
 		
 		if (GameElement.isMovementKey(key)) {
 			if (activeElement.move(Direction.directionFor(key))) {
+				
 				validMove = true;				
 			}
 		}
@@ -76,7 +70,8 @@ public class GameEngine implements Observer {
 				//Y is GRID_HEIGHT+1 because it'll move 2 positions right after spawning
 				Point2D p = new Point2D(columnIndex, GRID_HEIGHT+1);
 				plane = new Plane(p, "plane");
-				board.setElement(p, plane);			
+				board.setElement(p, plane);
+				scoreboard.setScore(ScoreType.Plane_Summoned);
 				
 				validMove = true;
 			}
@@ -106,13 +101,16 @@ public class GameEngine implements Observer {
 			}
 			
 			board.updateElements();
+			gui.setStatusMessage("Game Score: " + scoreboard.getScore());
 			
 			//gui.removeImage() was not displaying changes on gui.update()...?
 			gui.clearImages();
 			board.sendBoardToGUI();
 			
 			//Check if game ended
-			gameOver = board.isGameOver();
+			if (gameOver = board.isGameOver()) {
+				gui.setMessage("Game Over!");
+			}
 		}
 	}
 

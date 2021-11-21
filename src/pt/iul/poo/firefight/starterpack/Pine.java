@@ -30,6 +30,7 @@ public class Pine extends GameElement implements IBurnable {
 	@Override
 	public void update() {
 		GameBoard board = GameEngine.getInstance().board;
+		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
 		GameElement fire = board.objTypeInPosition(Fire.class, getPosition());
 		GameElement water = board.objTypeInPosition(Water.class, getPosition());
 		if (fire == null || water != null) return;
@@ -41,6 +42,7 @@ public class Pine extends GameElement implements IBurnable {
 			board.removeElement(getPosition(), fire);
 			board.removeElement(getPosition(), this);
 			board.setElement(getPosition(), burnt);
+			scoreboard.setScore(ScoreType.TileBurnt);
 		}
 	}
 }

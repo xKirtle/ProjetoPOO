@@ -14,7 +14,7 @@ public class Plane extends GameElement implements IMovable, IUpdatable {
 	public int getLayer() {
 		return GameLayers.Sky.toInt();
 	}
-	
+
 	@Override
 	public boolean move(Direction dir) {
 		Point2D newPosition = getPosition().plus(new Vector2D(0, -2));
@@ -25,10 +25,10 @@ public class Plane extends GameElement implements IMovable, IUpdatable {
 			setPosition(newPosition);
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public boolean canMoveTo(Point2D p) {
 		return p.getY() >= 0;
@@ -37,12 +37,17 @@ public class Plane extends GameElement implements IMovable, IUpdatable {
 	@Override
 	public void update() {
 		GameBoard board = GameEngine.getInstance().board;
+		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
 		Point2D p1 = getPosition();
 		Point2D p2 = getPosition().plus(new Vector2D(0, 1));
-		
-		if (board.coordWithinBoard(p1))
+
+		if (board.coordWithinBoard(p1) && board.objTypeInPosition(Fire.class, p1) != null) {
 			board.removeElement(p1, GameLayers.Fire);
-		if (board.coordWithinBoard(p2))
+			scoreboard.setScore(ScoreType.Plane_FireExtinguished);
+		}
+		if (board.coordWithinBoard(p2) && board.objTypeInPosition(Fire.class, p2) != null) {
 			board.removeElement(p2, GameLayers.Fire);
+			scoreboard.setScore(ScoreType.Plane_FireExtinguished);
+		}
 	}
 }
