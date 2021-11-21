@@ -1,7 +1,5 @@
 package pt.iul.poo.firefight.starterpack;
 
-import java.util.List;
-
 import pt.iul.ista.poo.utils.Point2D;
 
 public class Fire extends GameElement {
@@ -22,6 +20,7 @@ public class Fire extends GameElement {
 		for (Point2D p : position.getNeighbourhoodPoints()) {
 			if (!GameBoard.coordWithinBoard(p)) continue;
 			GameElement[] arr = board.getElements(p);
+			if (arr[GameLayers.Fire.toInt()] != null) continue;
 			
 			//TODO: CHANGE randomValue BACK TO 20
 			int randomValue = (int)(Math.random() * 20); //[0, 20[			

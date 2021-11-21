@@ -1,7 +1,5 @@
 package pt.iul.poo.firefight.starterpack;
 
-import java.util.List;
-
 import pt.iul.ista.poo.utils.Point2D;
 
 public class Grass extends GameElement implements IBurnable {

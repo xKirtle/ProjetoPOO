@@ -6,7 +6,8 @@ public enum GameLayers {
 	Water(2), //Water
 	ControllableVehicles(3), //Bulldozer
 	ControllablePlayers(4), //Fireman
-	Sky(5); //Plane
+	Sky(5), //Plane
+	NumberOfLayers(6);
 	
 	private final int layer;
 	private GameLayers(int layer) {

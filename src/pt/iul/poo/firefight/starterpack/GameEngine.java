@@ -3,33 +3,15 @@ package pt.iul.poo.firefight.starterpack;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
 import pt.iul.ista.poo.gui.ImageMatrixGUI;
-import pt.iul.ista.poo.gui.ImageTile;
 import pt.iul.ista.poo.observer.Observed;
 import pt.iul.ista.poo.observer.Observer;
 import pt.iul.ista.poo.utils.Direction;
 import pt.iul.ista.poo.utils.Point2D;
-
-// Note que esta classe e' um exemplo - nao pretende ser o inicio do projeto, 
-// embora tambem possa ser usada para isso.
-//
-// No seu projeto e' suposto haver metodos diferentes.
-// 
-// As coisas que comuns com o projeto, e que se pretendem ilustrar aqui, sao:
-// - GameEngine implementa Observer - para  ter o metodo update(...)  
-// - Configurar a janela do interface grafico (GUI):
-//        + definir as dimensoes
-//        + registar o objeto GameEngine ativo como observador da GUI
-//        + lancar a GUI
-// - O metodo update(...) e' invocado automaticamente sempre que se carrega numa tecla
-//
-// Tudo o mais podera' ser diferente!
-
 
 public class GameEngine implements Observer {
 
@@ -41,8 +23,9 @@ public class GameEngine implements Observer {
 	private ImageMatrixGUI gui;
 	private Fireman fireman;
 	private Bulldozer bulldozer;
-	private IMovable activeElement;
 	private Plane plane;
+	private IMovable activeElement;
+	private boolean gameOver;
 	
 	public GameBoard board;
 
@@ -59,6 +42,9 @@ public class GameEngine implements Observer {
 
 	@Override
 	public void update(Observed source) {
+		//TODO: Probably unnecessary as the new map will instantly be loaded..
+		if (gameOver) return;
+		
 		int key = gui.keyPressed();
 		
 		boolean validMove = false;
@@ -112,12 +98,16 @@ public class GameEngine implements Observer {
 			//gui.removeImage() was not displaying changes on gui.update()...?
 			gui.clearImages();
 			board.sendBoardToGUI();
+			
+			//Check if game ended
+			gameOver = board.isGameOver();
 		}
 	}
 
 	public void start() {
 		readLevelData();
 		activeElement = fireman;
+		gameOver = false;
 		board.sendBoardToGUI();
 	}
 
