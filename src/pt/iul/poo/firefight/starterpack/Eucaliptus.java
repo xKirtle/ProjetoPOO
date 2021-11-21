@@ -26,7 +26,7 @@ public class Eucaliptus extends GameElement implements IBurnable {
 		this.burnTime = burnTime;
 	}
 	
-	//TODO: update and trySpreadFire are the same in Pine, Eucaliptus and Grass
+	//TODO: update is the same in Pine, Eucaliptus and Grass
 	//Create an abstract class for "vegetation"?
 	
 	@Override
@@ -43,29 +43,7 @@ public class Eucaliptus extends GameElement implements IBurnable {
 				board.setElement(getPosition(), burnt);
 			}
 			else {
-				trySpreadFire();
-			}
-		}
-	}
-
-	@Override
-	public void trySpreadFire() {
-		GameBoard board = GameEngine.getInstance().board;
-
-		List<Point2D> points = getPosition().getNeighbourhoodPoints();
-		
-		for (Point2D p : points) {
-			if (!GameBoard.coordWithinBoard(p)) continue;
-			GameElement[] arr = board.getElements(p);
-			
-			int randomValue = (int)(Math.random() * 20); //[0, 20[			
-			boolean spreadFire = (arr[GameLayers.BaseElements.toInt()] instanceof Pine && randomValue <= 1) ||
-					(arr[GameLayers.BaseElements.toInt()] instanceof Eucaliptus && randomValue <= 2) ||
-					(arr[GameLayers.BaseElements.toInt()] instanceof Grass && randomValue <= 3);
-			
-			if (spreadFire) {
-				Fire fire = new Fire(p, "fire");
-				board.setElement(p, fire);
+				Fire.trySpreadFire(getPosition());
 			}
 		}
 	}
