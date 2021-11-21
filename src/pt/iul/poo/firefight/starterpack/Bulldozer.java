@@ -20,10 +20,20 @@ public class Bulldozer extends GameElement implements IMovable {
 		GameBoard board = GameEngine.getInstance().board;
 		
 		if (canMoveTo(newPosition) && board.objTypeInPosition(Fire.class, newPosition) == null) {
+			board.moveElement(getPosition(), newPosition, this);
 			setPosition(newPosition);
 			setName(GameElement.updateSpriteWithDirection("bulldozer", dir));
+			bulldozePosition(getPosition());
+			
 			return true;
 		}
 		return false;
+	}
+	
+	private void bulldozePosition(Point2D p) {
+		GameBoard board = GameEngine.getInstance().board;
+		
+		Land land = new Land(p, "land");
+		board.setElement(p, land);
 	}
 }

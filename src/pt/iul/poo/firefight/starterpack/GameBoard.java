@@ -1,15 +1,16 @@
 package pt.iul.poo.firefight.starterpack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import pt.iul.ista.poo.gui.ImageMatrixGUI;
-import pt.iul.ista.poo.gui.ImageTile;
 import pt.iul.ista.poo.utils.Point2D;
 
 public class GameBoard {	
 	//2d array mapped onto a 1d array where each index has an array of GameElements. The objects tied to a coordinate
 	
-	private final int maxLayersPerTile = 5;
+	private final int maxLayersPerTile = 6;
 	private int width;
 	private int height;
 	private GameElement[][] board;
@@ -34,8 +35,6 @@ public class GameBoard {
 	
 	public void setElement(int x, int y, GameElement element) {
 		board[x * height + y][element.getLayer()] = element;
-		ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-		gui.addImage(element);
 	}
 	
 	public void setElement(Point2D p, GameElement element) {
@@ -43,8 +42,6 @@ public class GameBoard {
 	}
 	
 	public void removeElement(int x, int y, GameElement element) {
-		ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
-		gui.removeImage(board[x * height + y][element.getLayer()]);
 		board[x * height + y][element.getLayer()] = null;
 	}
 	
@@ -52,17 +49,19 @@ public class GameBoard {
 		removeElement(p.getX(), p.getY(), element);
 	}
 	
-	public ArrayList<ImageTile> exportBoard() {
-		ArrayList<ImageTile> arr = new ArrayList<>();
-		
+	public void moveElement(Point2D oldPos, Point2D newPos, GameElement element) {
+		board[oldPos.getX() * height + oldPos.getY()][element.getLayer()] = null;
+		board[newPos.getX() * height + newPos.getY()][element.getLayer()] = element;
+	}
+	
+	public void sendBoardToGUI() {
+		ImageMatrixGUI gui = ImageMatrixGUI.getInstance();
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
 				if (board[i][j] != null)
-					arr.add((ImageTile)board[i][j]);
+					gui.addImage(board[i][j]);
 			}
 		}
-		
-		return arr;
 	}
 	
 	public <T> GameElement objTypeInPosition(Class<T> objType, Point2D p) {
@@ -95,5 +94,19 @@ public class GameBoard {
 	
 	public static boolean coordWithinBoard(Point2D p) {
 		return coordWithinBoard(p.getX(), p.getY());
+	}
+	
+	public List<Integer> firesPerColumn() {
+		Integer[] arr = new Integer[width];
+		for	(int i = 0; i < width; i++) {
+			arr[i] = 0;
+			for	(int j = 0; j < height; j++) {
+				Point2D p = new Point2D(i, j);
+				if (objTypeInPosition(Fire.class, p) != null)
+					arr[i] += 1;
+			}
+		}
+
+		return new ArrayList<Integer>(Arrays.asList(arr));
 	}
 }

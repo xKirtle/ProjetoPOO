@@ -11,12 +11,28 @@ public class Fireman extends GameElement implements IMovable {
 	public boolean move(Direction dir) {
 		Point2D newPosition = getPosition().plus(dir.asVector());
 		GameBoard board = GameEngine.getInstance().board;
+		GameElement fire = board.objTypeInPosition(Fire.class, newPosition);
+		GameElement water = board.objTypeInPosition(Water.class, newPosition);
 
-		if (canMoveTo(newPosition) && board.objTypeInPosition(Fire.class, newPosition) == null) {
-			setPosition(newPosition);
+		if (canMoveTo(newPosition)) {
+			if (fire == null || water != null) {
+				board.moveElement(getPosition(), newPosition, this);				
+				setPosition(newPosition);
+			}
+			else if (fire != null && water == null)
+				extinguishFire(newPosition, dir);
+			
 			return true;
 		}
 		return false;
+	}
+	
+	private void extinguishFire(Point2D p, Direction dir) {
+		Water water = new Water(p, "water", dir);
+		water.setName(GameElement.updateSpriteWithDirection("water", dir));
+		
+		GameBoard board = GameEngine.getInstance().board;
+		board.setElement(p, water);
 	}
 
 	@Override

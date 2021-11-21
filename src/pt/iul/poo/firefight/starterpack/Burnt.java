@@ -10,6 +10,6 @@ public class Burnt extends GameElement {
 
 	@Override
 	public int getLayer() {
-		return GameLayers.BurntElements.toInt();
+		return GameLayers.BaseElements.toInt();
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,7 +40,9 @@ public class GameEngine implements Observer {
 	
 	private ImageMatrixGUI gui;
 	private Fireman fireman;
+	private Bulldozer bulldozer;
 	private IMovable activeElement;
+	private Plane plane;
 	
 	public GameBoard board;
 
@@ -56,25 +59,66 @@ public class GameEngine implements Observer {
 
 	@Override
 	public void update(Observed source) {
-		activeElement = fireman;
 		int key = gui.keyPressed();
 		
 		boolean validMove = false;
 		
-		if (GameElement.isMovementKey(key))
+		if (GameElement.isMovementKey(key)) {
 			if (activeElement.move(Direction.directionFor(key))) {
 				validMove = true;				
 			}
+		}
+		
+		if (key == KeyEvent.VK_P) {
+			if (plane == null) {
+				List<Integer> firesPerColumn = board.firesPerColumn();
+				Integer maxValue = Collections.max(firesPerColumn);
+				Integer columnIndex = firesPerColumn.indexOf(maxValue);
+				
+				//Y is GRID_HEIGHT+1 because it'll move 2 positions right after spawning
+				Point2D p = new Point2D(columnIndex, GRID_HEIGHT+1);
+				plane = new Plane(p, "plane");
+				board.setElement(p, plane);			
+				
+				validMove = true;
+			}
+		}
+		
+		if (key == KeyEvent.VK_ENTER && fireman.getPosition().equals(bulldozer.getPosition())) {
+			if (activeElement instanceof Fireman) {
+				activeElement = bulldozer;
+				board.removeElement(fireman.getPosition(), fireman);
+			}
+			else if (activeElement instanceof Bulldozer) {
+				activeElement = fireman;
+				board.setElement(fireman.getPosition(), fireman);
+			}
+			
+			validMove = true;
+		}
 		
 		if (validMove) {
+			if (plane != null) {
+				if (plane.getPosition().getY() >= 2)
+					plane.move(Direction.UP);
+				else {
+					board.removeElement(plane.getPosition(), plane);
+					plane = null;
+				}
+			}
+			
 			board.updateElements();
-			gui.update();
+			
+			//gui.removeImage() was not displaying changes on gui.update()...?
+			gui.clearImages();
+			board.sendBoardToGUI();
 		}
 	}
 
 	public void start() {
 		readLevelData();
-		sendImagesToGUI();
+		activeElement = fireman;
+		board.sendBoardToGUI();
 	}
 
 	private void readLevelData() {
@@ -109,15 +153,11 @@ public class GameEngine implements Observer {
 				if (element instanceof Fireman) {
 					fireman = (Fireman)element;
 				}
-//				else if (data[0].toLowerCase().equals("bulldozer"))
-//					bulldozer = (Bulldozer)element;
-//				else if (data[0].toLowerCase().equals("fire"))
-//					fireList.add(element.getPosition());
+				else if (element instanceof Bulldozer) {
+					bulldozer = (Bulldozer)element;
+				}
 
-//				tileList.add(element);
-				
 				board.setElement(p, element);
-				
 			}
 		}
 		catch (FileNotFoundException e) {
@@ -127,9 +167,5 @@ public class GameEngine implements Observer {
 	
 	public static GameEngine getInstance() {
 		return Instance;
-	}
-	
-	private void sendImagesToGUI() {
-		gui.addImages(board.exportBoard());
 	}
 }

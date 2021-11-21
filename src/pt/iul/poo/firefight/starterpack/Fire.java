@@ -12,7 +12,7 @@ public class Fire extends GameElement {
 
 	@Override
 	public int getLayer() {
-		return GameLayers.TemporaryStates.toInt();
+		return GameLayers.Fire.toInt();
 	}
 
 	//Should this be here?
@@ -23,6 +23,7 @@ public class Fire extends GameElement {
 			if (!GameBoard.coordWithinBoard(p)) continue;
 			GameElement[] arr = board.getElements(p);
 			
+			//TODO: CHANGE randomValue BACK TO 20
 			int randomValue = (int)(Math.random() * 20); //[0, 20[			
 			boolean spreadFire = (arr[GameLayers.BaseElements.toInt()] instanceof Pine && randomValue <= 1) ||
 					(arr[GameLayers.BaseElements.toInt()] instanceof Eucaliptus && randomValue <= 2) ||
@@ -33,5 +34,15 @@ public class Fire extends GameElement {
 				board.setElement(p, fire);
 			}
 		}
+	}
+	
+	public static void removeFire(Point2D position) {
+		GameBoard board = GameEngine.getInstance().board;
+
+		GameElement[] arr = board.getElements(position);
+		GameElement elem = arr[GameLayers.Fire.toInt()];
+		
+		if (elem != null)
+			board.removeElement(position, elem);
 	}
 }
