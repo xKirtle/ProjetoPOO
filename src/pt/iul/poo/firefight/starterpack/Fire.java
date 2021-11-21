@@ -13,16 +13,15 @@ public class Fire extends GameElement {
 		return GameLayers.Fire.toInt();
 	}
 
-	//Should this be here?
-	public static void trySpreadFire(Point2D position) {
+	//Should there be an "invicibility" cooldown where the tile can't be on fire after being extinguished?
+	public void trySpreadFire() {
 		GameBoard board = GameEngine.getInstance().board;
 
-		for (Point2D p : position.getNeighbourhoodPoints()) {
-			if (!GameBoard.coordWithinBoard(p)) continue;
+		for (Point2D p : getPosition().getNeighbourhoodPoints()) {
+			if (!board.coordWithinBoard(p)) continue;
 			GameElement[] arr = board.getElements(p);
 			if (arr[GameLayers.Fire.toInt()] != null) continue;
 			
-			//TODO: CHANGE randomValue BACK TO 20
 			int randomValue = (int)(Math.random() * 20); //[0, 20[			
 			boolean spreadFire = (arr[GameLayers.BaseElements.toInt()] instanceof Pine && randomValue <= 1) ||
 					(arr[GameLayers.BaseElements.toInt()] instanceof Eucaliptus && randomValue <= 2) ||
@@ -35,13 +34,8 @@ public class Fire extends GameElement {
 		}
 	}
 	
-	public static void removeFire(Point2D position) {
-		GameBoard board = GameEngine.getInstance().board;
-
-		GameElement[] arr = board.getElements(position);
-		GameElement elem = arr[GameLayers.Fire.toInt()];
-		
-		if (elem != null)
-			board.removeElement(position, elem);
+	@Override
+	public void update() {
+		trySpreadFire();
 	}
 }

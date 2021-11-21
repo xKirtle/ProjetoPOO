@@ -18,7 +18,7 @@ public class GameEngine implements Observer {
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
 	public static final String levelPath = "levels/example.txt";
-	private static GameEngine Instance;
+	private static GameEngine instance;
 	
 	private ImageMatrixGUI gui;
 	private Fireman fireman;
@@ -28,22 +28,34 @@ public class GameEngine implements Observer {
 	private boolean gameOver;
 	
 	public GameBoard board;
+	public Scoreboard scoreboard; //public?
 
-	public GameEngine() {
-		 
+	private GameEngine() {
 		gui = ImageMatrixGUI.getInstance();	
 		gui.setSize(GRID_HEIGHT, GRID_WIDTH); 
 		gui.registerObserver(this);
-		gui.go();
-		
-		Instance = this;
 		board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
+		scoreboard = new Scoreboard();
+		gui.go();
+	}
+	
+	public static GameEngine getInstance() {
+		if (instance == null)
+			instance = new GameEngine();
+		
+		return instance;
 	}
 
 	@Override
 	public void update(Observed source) {
 		//TODO: Probably unnecessary as the new map will instantly be loaded..
-		if (gameOver) return;
+		if (gameOver) {
+			gui.setStatusMessage("Game Score: 1000"); //Scoreboard
+			gui.setMessage("Game Over!"); //Alerta
+			
+			//Depois do alerta, carregar novo nivel
+			return;
+		}
 		
 		int key = gui.keyPressed();
 		
@@ -153,9 +165,5 @@ public class GameEngine implements Observer {
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static GameEngine getInstance() {
-		return Instance;
 	}
 }

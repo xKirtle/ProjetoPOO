@@ -42,8 +42,5 @@ public class Pine extends GameElement implements IBurnable {
 			board.removeElement(getPosition(), this);
 			board.setElement(getPosition(), burnt);
 		}
-		else {
-			Fire.trySpreadFire(getPosition());
-		}
 	}
 }

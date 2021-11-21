@@ -36,12 +36,13 @@ public class Plane extends GameElement implements IMovable, IUpdatable {
 
 	@Override
 	public void update() {
+		GameBoard board = GameEngine.getInstance().board;
 		Point2D p1 = getPosition();
 		Point2D p2 = getPosition().plus(new Vector2D(0, 1));
 		
-		if (GameBoard.coordWithinBoard(p1))
-			Fire.removeFire(p1);
-		if (GameBoard.coordWithinBoard(p2))
-			Fire.removeFire(p2);
+		if (board.coordWithinBoard(p1))
+			board.removeElement(p1, GameLayers.Fire);
+		if (board.coordWithinBoard(p2))
+			board.removeElement(p2, GameLayers.Fire);
 	}
 }

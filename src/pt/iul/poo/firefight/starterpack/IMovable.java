@@ -5,7 +5,8 @@ import pt.iul.ista.poo.utils.Point2D;
 
 public interface IMovable {
 	public default boolean canMoveTo(Point2D p) {
-		return GameBoard.coordWithinBoard(p);
+		GameBoard board = GameEngine.getInstance().board;
+		return board.coordWithinBoard(p);
 	}
 	
 	public boolean move(Direction dir);

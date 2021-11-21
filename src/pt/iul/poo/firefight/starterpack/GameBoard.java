@@ -50,15 +50,23 @@ public class GameBoard {
 		removeElement(p.getX(), p.getY(), element);
 	}
 	
-	public static boolean coordWithinBoard(int x, int y) {
-		if (x < 0 || x >= GameEngine.GRID_WIDTH || 
-				y < 0 || y >= GameEngine.GRID_HEIGHT) 
+	public void removeElement(int x, int y, GameLayers layer) {
+		board[x * height + y][layer.toInt()] = null;
+	}
+	
+	public void removeElement(Point2D p, GameLayers layer) {
+		removeElement(p.getX(), p.getY(), layer);
+	}
+	
+	public boolean coordWithinBoard(int x, int y) {
+		if (x < 0 || x >= width || 
+				y < 0 || y >= height) 
 			return false;
 		
 		return true;
 	}
 	
-	public static boolean coordWithinBoard(Point2D p) {
+	public boolean coordWithinBoard(Point2D p) {
 		return coordWithinBoard(p.getX(), p.getY());
 	}
 	
