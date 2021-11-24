@@ -117,7 +117,6 @@ public class GameEngine implements Observer {
 	public void start() {
 		readLevelData();
 		activeElement = fireman;
-		gameOver = false;
 		board.sendBoardToGUI();
 	}
 
