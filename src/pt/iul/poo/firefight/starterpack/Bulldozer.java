@@ -20,7 +20,7 @@ public class Bulldozer extends GameElement implements IMovable {
 		GameBoard board = GameEngine.getInstance().board;
 		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
 		
-		if (canMoveTo(newPosition) && board.objTypeInPosition(Fire.class, newPosition) == null) {
+		if (canMoveTo(newPosition) && board.fireAtPosition(newPosition) == null) {
 			board.moveElement(getPosition(), newPosition, this);
 			setPosition(newPosition);
 			scoreboard.setScore(ScoreType.Bulldozer_Move);

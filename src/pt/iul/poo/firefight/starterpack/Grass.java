@@ -31,8 +31,8 @@ public class Grass extends GameElement implements IBurnable {
 	public void update() {
 		GameBoard board = GameEngine.getInstance().board;
 		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
-		GameElement fire = board.objTypeInPosition(Fire.class, getPosition());
-		GameElement water = board.objTypeInPosition(Water.class, getPosition());
+		GameElement fire = board.fireAtPosition(getPosition());
+		GameElement water = board.waterAtPosition(getPosition());
 		if (fire == null || water != null) return;
 
 		burn();

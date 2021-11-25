@@ -95,10 +95,21 @@ public class GameBoard {
 		}
 	}
 	
-	public <T> GameElement objTypeInPosition(Class<T> objType, Point2D p) {
+	//TODO: Criar metodo generico..
+	public GameElement fireAtPosition(Point2D p) {
 		GameElement[] arr = getElements(p);
 		for (GameElement elem : arr) {
-			if (elem != null && elem.getClass().equals(objType))
+			if (elem != null && elem instanceof Fire)
+				return elem;
+		}
+		
+		return null;
+	}
+	
+	public GameElement waterAtPosition(Point2D p) {
+		GameElement[] arr = getElements(p);
+		for (GameElement elem : arr) {
+			if (elem != null && elem instanceof Water)
 				return elem;
 		}
 		
@@ -111,7 +122,7 @@ public class GameBoard {
 			arr[i] = 0;
 			for	(int j = 0; j < height; j++) {
 				Point2D p = new Point2D(i, j);
-				if (objTypeInPosition(Fire.class, p) != null)
+				if (fireAtPosition(p) != null)
 					arr[i] += 1;
 			}
 		}

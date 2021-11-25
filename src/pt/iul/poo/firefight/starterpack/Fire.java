@@ -20,7 +20,9 @@ public class Fire extends GameElement {
 		for (Point2D p : getPosition().getNeighbourhoodPoints()) {
 			if (!board.coordWithinBoard(p)) continue;
 			GameElement[] arr = board.getElements(p);
-			if (arr[GameLayers.Fire.toInt()] != null) continue;
+			if (arr[GameLayers.Fire.toInt()] != null || 
+				arr[GameLayers.ControllablePlayers.toInt()] != null ||
+				arr[GameLayers.ControllableVehicles.toInt()] != null) continue;
 			
 			int randomValue = (int)(Math.random() * 20); //[0, 20[			
 			boolean spreadFire = (arr[GameLayers.BaseElements.toInt()] instanceof Pine && randomValue <= 1) ||

@@ -12,8 +12,8 @@ public class Fireman extends GameElement implements IMovable {
 		Point2D newPosition = getPosition().plus(dir.asVector());
 		GameBoard board = GameEngine.getInstance().board;
 		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
-		GameElement fire = board.objTypeInPosition(Fire.class, newPosition);
-		GameElement water = board.objTypeInPosition(Water.class, newPosition);
+		GameElement fire = board.fireAtPosition(newPosition);
+		GameElement water = board.waterAtPosition(newPosition);
 
 		if (canMoveTo(newPosition)) {
 			if (fire == null || water != null) {

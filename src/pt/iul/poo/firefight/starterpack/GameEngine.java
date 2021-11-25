@@ -17,7 +17,7 @@ public class GameEngine implements Observer {
 
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
-	public static final String levelPath = "levels/example.txt";
+	public static String levelPath = "levels/example.txt";
 	private static GameEngine instance;
 	
 	private ImageMatrixGUI gui;
@@ -47,15 +47,17 @@ public class GameEngine implements Observer {
 	}
 
 	@Override
-	public void update(Observed source) {
-		if (gameOver) return;
-		
+	public void update(Observed source) {		
 		int key = gui.keyPressed();
 		
 		boolean validMove = false;
 		
 		if (GameElement.isMovementKey(key)) {
 			if (activeElement.move(Direction.directionFor(key))) {
+				
+				//Atualizar fireman dentro do bulldozer
+				if (activeElement instanceof Bulldozer)
+					fireman.setPosition(bulldozer.getPosition());
 				
 				validMove = true;				
 			}
@@ -84,6 +86,7 @@ public class GameEngine implements Observer {
 			}
 			else if (activeElement instanceof Bulldozer) {
 				activeElement = fireman;
+				fireman.setPosition(bulldozer.getPosition());
 				board.setElement(fireman.getPosition(), fireman);
 			}
 			
@@ -109,7 +112,14 @@ public class GameEngine implements Observer {
 			
 			//Check if game ended
 			if (gameOver = board.isGameOver()) {
+				//Contar nmr de casas que sobreviveram para adicionar ao scoreboard
 				gui.setMessage("Game Over!");
+				
+				
+				//Reiniciar jogo
+				gui.clearImages();
+				board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
+				start();
 			}
 		}
 	}
