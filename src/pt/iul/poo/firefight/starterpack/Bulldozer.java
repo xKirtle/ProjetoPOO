@@ -19,11 +19,11 @@ public class Bulldozer extends GameElement implements IMovable {
 		Point2D newPosition = getPosition().plus(dir.asVector());
 		GameBoard board = GameEngine.getInstance().board;
 		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
-		
+	
 		if (canMoveTo(newPosition) && board.fireAtPosition(newPosition) == null) {
 			board.moveElement(getPosition(), newPosition, this);
 			setPosition(newPosition);
-			scoreboard.setScore(ScoreType.Bulldozer_Move);
+			scoreboard.addScore(ScoreType.Bulldozer_Move);
 			setName(GameElement.updateSpriteWithDirection("bulldozer", dir));
 			bulldozePosition(getPosition());
 			
@@ -38,6 +38,6 @@ public class Bulldozer extends GameElement implements IMovable {
 		
 		Land land = new Land(p, "land");
 		board.setElement(p, land);
-		scoreboard.setScore(ScoreType.TileBulldozed);
+		scoreboard.addScore(ScoreType.TileBulldozed);
 	}
 }

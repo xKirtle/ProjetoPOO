@@ -42,7 +42,7 @@ public class Pine extends GameElement implements IBurnable {
 			board.removeElement(getPosition(), fire);
 			board.removeElement(getPosition(), this);
 			board.setElement(getPosition(), burnt);
-			scoreboard.setScore(ScoreType.TileBurnt);
+			scoreboard.addScore(ScoreType.TileBurnt);
 		}
 	}
 }

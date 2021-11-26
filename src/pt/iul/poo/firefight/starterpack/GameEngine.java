@@ -17,7 +17,7 @@ public class GameEngine implements Observer {
 
 	public static final int GRID_HEIGHT = 10;
 	public static final int GRID_WIDTH = 10;
-	public static String levelPath = "levels/example.txt";
+	public static String levelPath = "levels/level1.txt";
 	private static GameEngine instance;
 	
 	private ImageMatrixGUI gui;
@@ -25,7 +25,6 @@ public class GameEngine implements Observer {
 	private Bulldozer bulldozer;
 	private Plane plane;
 	private IMovable activeElement;
-	private boolean gameOver;
 	
 	public GameBoard board;
 	public Scoreboard scoreboard; //public?
@@ -73,7 +72,7 @@ public class GameEngine implements Observer {
 				Point2D p = new Point2D(columnIndex, GRID_HEIGHT+1);
 				plane = new Plane(p, "plane");
 				board.setElement(p, plane);
-				scoreboard.setScore(ScoreType.Plane_Summoned);
+				scoreboard.addScore(ScoreType.Plane_Summoned);
 				
 				validMove = true;
 			}
@@ -111,14 +110,17 @@ public class GameEngine implements Observer {
 			board.sendBoardToGUI();
 			
 			//Check if game ended
-			if (gameOver = board.isGameOver()) {
-				//Contar nmr de casas que sobreviveram para adicionar ao scoreboard
-				gui.setMessage("Game Over!");
+			if (board.isGameOver()) {
 				
+				int tilesIntact = board.tilesIntact();
+				scoreboard.addScore(ScoreType.TileIntact.getValue() * tilesIntact);
+				gui.setStatusMessage("Game Score: " + scoreboard.getScore());
+				gui.setMessage("Level finished! \nLevel score: " + scoreboard.getScore());
 				
 				//Reiniciar jogo
 				gui.clearImages();
 				board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
+				LevelGenerator.generateLevel(10, 10, "level1");
 				start();
 			}
 		}
@@ -127,6 +129,8 @@ public class GameEngine implements Observer {
 	public void start() {
 		readLevelData();
 		activeElement = fireman;
+		scoreboard.resetScore();
+		gui.setStatusMessage("Game Score: " + scoreboard.getScore());
 		board.sendBoardToGUI();
 	}
 
@@ -168,6 +172,8 @@ public class GameEngine implements Observer {
 
 				board.setElement(p, element);
 			}
+			
+			s.close();
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();

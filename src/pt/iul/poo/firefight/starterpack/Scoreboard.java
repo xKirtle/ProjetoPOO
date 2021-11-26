@@ -7,7 +7,8 @@ enum ScoreType {
 	TileBulldozed(-5),
 	Fireman_Move(2),
 	Bulldozer_Move(3),
-	Plane_Summoned(-5);
+	Plane_Summoned(-5),
+	TileIntact(1);
 	
 	private final int scoreValue;
 	private ScoreType(int scoreValue) {
@@ -38,7 +39,15 @@ public class Scoreboard {
 		return score;
 	}
 	
-	public void setScore(ScoreType type) {
+	public void addScore(ScoreType type) {
 		score += type.getValue();
+	}
+	
+	public void addScore(int value) {
+		score += value;
+	}
+	
+	public void resetScore() {
+		score = 0;
 	}
 }
