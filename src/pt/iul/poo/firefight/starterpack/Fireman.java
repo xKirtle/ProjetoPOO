@@ -14,9 +14,15 @@ public class Fireman extends GameElement implements IMovable {
 		Scoreboard scoreboard = GameEngine.getInstance().scoreboard;
 
 		if (!canMoveTo(newPosition)) return false;
+		
+		if (board.getElements(newPosition)[GameLayers.ControllableVehicles.toInt()] != null) {
+			getInBulldozer();
+			return true;
+		}
+		
 		GameElement fire = board.fireAtPosition(newPosition);
 		GameElement water = board.waterAtPosition(newPosition);
-
+		
 		if (fire == null || water != null) {
 			board.moveElement(getPosition(), newPosition, this);				
 			setPosition(newPosition);
@@ -36,6 +42,14 @@ public class Fireman extends GameElement implements IMovable {
 
 		GameBoard board = GameEngine.getInstance().board;
 		board.setElement(p, water);
+	}
+	
+	private void getInBulldozer() {
+		GameEngine ge = GameEngine.getInstance();
+		GameBoard board = ge.board;
+		
+		board.removeElement(getPosition(), this);
+		ge.activeElement = ge.bulldozer;
 	}
 
 	@Override

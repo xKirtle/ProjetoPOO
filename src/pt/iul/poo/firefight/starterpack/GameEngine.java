@@ -19,13 +19,13 @@ public class GameEngine implements Observer {
 	public static final int GRID_WIDTH = 10;
 	public static String levelPath = "levels/level1.txt";
 	private static GameEngine instance;
-	
+
 	private ImageMatrixGUI gui;
-	private Fireman fireman;
-	private Bulldozer bulldozer;
+	public Fireman fireman;
+	public Bulldozer bulldozer;
 	private Plane plane;
-	private IMovable activeElement;
-	
+	public IMovable activeElement;
+
 	public GameBoard board;
 	public Scoreboard scoreboard; //public?
 
@@ -37,61 +37,51 @@ public class GameEngine implements Observer {
 		scoreboard = Scoreboard.getInstance();
 		gui.go();
 	}
-	
+
 	public static GameEngine getInstance() {
 		if (instance == null)
 			instance = new GameEngine();
-		
+
 		return instance;
 	}
 
 	@Override
 	public void update(Observed source) {		
 		int key = gui.keyPressed();
-		
+
 		boolean validMove = false;
-		
+
 		if (GameElement.isMovementKey(key)) {
 			if (activeElement.move(Direction.directionFor(key))) {
-				
-				//Atualizar fireman dentro do bulldozer
-				if (activeElement instanceof Bulldozer)
-					fireman.setPosition(bulldozer.getPosition());
-				
-				validMove = true;				
+
+				validMove = true;			
 			}
 		}
-		
+
 		if (key == KeyEvent.VK_P) {
 			if (plane == null) {
 				List<Integer> firesPerColumn = board.firesPerColumn();
 				Integer maxValue = Collections.max(firesPerColumn);
 				Integer columnIndex = firesPerColumn.indexOf(maxValue);
-				
+
 				//Y is GRID_HEIGHT+1 because it'll move 2 positions right after spawning
 				Point2D p = new Point2D(columnIndex, GRID_HEIGHT+1);
 				plane = new Plane(p, "plane");
 				board.setElement(p, plane);
 				scoreboard.addScore(ScoreType.Plane_Summoned);
-				
+
 				validMove = true;
 			}
 		}
-		
-		if (key == KeyEvent.VK_ENTER && fireman.getPosition().equals(bulldozer.getPosition())) {
-			if (activeElement instanceof Fireman) {
-				activeElement = bulldozer;
-				board.removeElement(fireman.getPosition(), fireman);
-			}
-			else if (activeElement instanceof Bulldozer) {
-				activeElement = fireman;
-				fireman.setPosition(bulldozer.getPosition());
-				board.setElement(fireman.getPosition(), fireman);
-			}
-			
+
+		if (key == KeyEvent.VK_ENTER && activeElement instanceof Bulldozer) {
+			activeElement = fireman;
+			fireman.setPosition(bulldozer.getPosition());
+			board.setElement(fireman.getPosition(), fireman);
+
 			validMove = true;
 		}
-		
+
 		if (validMove) {
 			if (plane != null) {
 				if (plane.getPosition().getY() >= 2)
@@ -101,22 +91,22 @@ public class GameEngine implements Observer {
 					plane = null;
 				}
 			}
-			
+
 			board.updateElements();
 			gui.setStatusMessage("Game Score: " + scoreboard.getScore());
-			
+
 			//gui.removeImage() was not displaying changes on gui.update()...?
 			gui.clearImages();
 			board.sendBoardToGUI();
-			
+
 			//Check if game ended
 			if (board.isGameOver()) {
-				
+
 				int tilesIntact = board.tilesIntact();
 				scoreboard.addScore(ScoreType.TileIntact.getValue() * tilesIntact);
 				gui.setStatusMessage("Game Score: " + scoreboard.getScore());
 				gui.setMessage("Level finished! \nLevel score: " + scoreboard.getScore());
-				
+
 				//Reiniciar jogo
 				gui.clearImages();
 				board = new GameBoard(GRID_WIDTH, GRID_HEIGHT);
@@ -162,7 +152,7 @@ public class GameEngine implements Observer {
 				Point2D p = new Point2D(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
 				GameElement element = GameElement.newInstanceByType(data[0], p);
 				if (element == null) break;
-				
+
 				if (element instanceof Fireman) {
 					fireman = (Fireman)element;
 				}
@@ -172,7 +162,7 @@ public class GameEngine implements Observer {
 
 				board.setElement(p, element);
 			}
-			
+
 			s.close();
 		}
 		catch (FileNotFoundException e) {
